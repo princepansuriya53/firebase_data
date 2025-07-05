@@ -1,15 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PhoneAuthService {
+  String? verificationId;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  String? verificationId;
-
-  // Send OTP
   Future<void> sendOtp({
     required String phoneNumber,
-    required Function(String verificationId, int? resendToken) onSuccess,
     required Function(String error) onError,
+    required Function(String verificationId, int? resendToken) onSuccess,
   }) async {
     try {
       await auth.verifyPhoneNumber(
@@ -56,7 +54,7 @@ class PhoneAuthService {
           await auth.signInWithCredential(credential);
         },
         verificationFailed: (FirebaseAuthException e) {
-          // handled below
+          print('verificationFailed:---${e.toString()}');
         },
         codeSent: (String verificationId, int? newResendToken) {
           this.verificationId = verificationId;
@@ -86,19 +84,12 @@ class PhoneAuthService {
         verificationId: verificationId!,
         smsCode: smsCode,
       );
-      await auth.signInWithCredential(
-        credential,
-      ); // Sign the user in with the credential
-
-      // If successful, return null (signing in the user)
+      await auth.signInWithCredential(credential);
       return null; // success
     } on FirebaseAuthException catch (e) {
-      // Return the error message if there's an exception related to Firebase Auth
       return mapFirebaseAuthError(e);
     } catch (e) {
-      // If an error occurs that isn't related to FirebaseAuthException, print it
-      // and return a general error message
-      print('ERROR:--${e.toString()}'); // For debugging purposes
+      print('ERROR:--${e.toString()}');
       return "Something went wrong: ${e.toString()}";
     }
   }
