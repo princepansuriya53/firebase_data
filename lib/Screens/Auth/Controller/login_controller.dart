@@ -1,6 +1,6 @@
 import 'package:firebase_data/Services/Api/api_base_helper.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

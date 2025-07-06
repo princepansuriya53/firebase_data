@@ -14,50 +14,62 @@ class NumberScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Phone Login')),
       body: Padding(
         padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: controller.phoneController,
-              decoration: InputDecoration(
-                prefixText: '+91 ',
-                labelText: 'Phone Number',
-                border: OutlineInputBorder(),
+        child: Obx(() {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: controller.phoneController,
+                decoration: InputDecoration(
+                  prefixText: '+91 ',
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
+                enabled: !controller.isOtpSent.value,
               ),
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 20.h),
-            TextField(
-              controller: controller.smsCodeController,
-              decoration: InputDecoration(labelText: 'SMS Code'),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 20.h),
-            Obx(
-              () => ElevatedButton(
+              SizedBox(height: 20.h),
+
+              if (controller.isOtpSent.value) ...[
+                TextField(
+                  controller: controller.smsCodeController,
+                  decoration: InputDecoration(
+                    labelText: 'SMS Code',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                SizedBox(height: 20.h),
+              ],
+
+              ElevatedButton(
                 onPressed: controller.isOtpSent.value
-                    ? () => controller.verifyOtp()
-                    : () => controller.sendOtp(),
+                    ? controller.verifyOtp
+                    : controller.sendOtp,
                 child: Text(
                   controller.isOtpSent.value ? 'Verify & Sign In' : 'Send OTP',
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => controller.resendOtp(),
-              child: Text('Resend OTP'),
-            ),
-            Obx(() {
-              if (controller.errorMessage.isNotEmpty) {
-                return Text(
+
+              if (controller.isOtpSent.value) ...[
+                SizedBox(height: 16.h),
+                ElevatedButton(
+                  onPressed: controller.resendOtp,
+                  child: Text('Resend OTP'),
+                ),
+              ],
+
+              if (controller.errorMessage.isNotEmpty) ...[
+                SizedBox(height: 16.h),
+                Text(
                   controller.errorMessage.value,
                   style: TextStyle(color: Colors.red),
-                );
-              }
-              return Container();
-            }),
-          ],
-        ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ],
+          );
+        }),
       ),
     );
   }

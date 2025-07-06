@@ -1,20 +1,20 @@
-import 'package:firebase_data/Services/Firebase/phone_auth_services.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_data/Services/Firebase/phone_auth_services.dart';
 
 class PhoneAuthController extends GetxController {
-  final PhoneAuthService _phoneAuthService = PhoneAuthService();
   RxBool isOtpSent = false.obs;
+  RxString errorMessage = "".obs;
+  final PhoneAuthService phoneAuthService = PhoneAuthService();
   TextEditingController phoneController = TextEditingController();
   TextEditingController smsCodeController = TextEditingController();
-  RxString errorMessage = "".obs;
 
   // Send OTP
   Future<void> sendOtp() async {
     final phoneNumber = '+91 ${phoneController.text.trim()}';
     if (phoneNumber.isNotEmpty) {
       try {
-        await _phoneAuthService.sendOtp(
+        await phoneAuthService.sendOtp(
           phoneNumber: phoneNumber,
           onSuccess: (verificationId, resendToken) {
             isOtpSent.value = true;
@@ -36,11 +36,11 @@ class PhoneAuthController extends GetxController {
 
   // Resend OTP
   Future<void> resendOtp() async {
-    final phoneNumber = '+91 ' + phoneController.text.trim();
+    final phoneNumber = '+91 ${phoneController.text.trim()}';
     try {
-      await _phoneAuthService.resendOtp(
+      await phoneAuthService.resendOtp(
+        resendToken: 0,
         phoneNumber: phoneNumber,
-        resendToken: 0, // Or use your logic to get the resend token
         onCodeSent: (verificationId, resendToken) {
           Get.snackbar('OTP Resent', 'Please check your phone for the OTP');
         },
@@ -55,7 +55,7 @@ class PhoneAuthController extends GetxController {
     final smsCode = smsCodeController.text.trim();
     if (smsCode.isNotEmpty) {
       try {
-        final error = await _phoneAuthService.verifyOtp(smsCode: smsCode);
+        final error = await phoneAuthService.verifyOtp(smsCode: smsCode);
         if (error == null) {
           Get.snackbar('Success', 'You have successfully signed in');
           // Navigate to the home screen or wherever necessary

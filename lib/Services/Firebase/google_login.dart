@@ -40,8 +40,8 @@ Future<UserCredential?> googleSignIn() async {
       return null;
     }
   } catch (e, t) {
-    print('hello googleSignIn error ----- ${e}');
-    print('hello googleSignIn trace ----- ${t}');
+    print('hello googleSignIn error ----- $e');
+    print('hello googleSignIn trace ----- $t');
   }
 
   return null;
